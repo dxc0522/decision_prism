@@ -12,5 +12,5 @@ def test_extract_document_import():
 def test_extract_document_has_retry():
     """Verify the function has retry decorator (3 attempts)."""
 
-    # The function should have retry configured
+    # 函数应配置重试机制
     assert hasattr(extract_document, "retry")

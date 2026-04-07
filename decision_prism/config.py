@@ -8,13 +8,13 @@ class Settings(BaseSettings):
     tavily_api_key: str = ""
     firecrawl_api_key: str = ""
 
-    # LLM defaults
+    # LLM 默认配置
     llm_model: str = "qwen/qwen3.6-plus:free"
     llm_base_url: str = "https://openrouter.ai/api/v1"
     llm_temperature: float = 0.7
     llm_max_tokens: int = 4096
 
-    # Debate config
+    # 辩论配置
     debate_max_rounds: int = 3
     debate_expert_count: int = 3
     mc_simulations: int = 10000

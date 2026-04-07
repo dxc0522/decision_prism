@@ -1,4 +1,4 @@
-"""Build the debate StateGraph."""
+"""构建辩论 StateGraph。"""
 
 from langgraph.graph import END, StateGraph
 
@@ -25,10 +25,10 @@ from decision_prism.models.state import DebateState
 
 
 def build_debate_graph() -> StateGraph:
-    """Build and compile the debate StateGraph."""
+    """构建并编译辩论 StateGraph。"""
     workflow = StateGraph(DebateState)
 
-    # Add nodes
+    # 添加节点
     workflow.add_node("intent_parsing", intent_parsing_node)
     workflow.add_node("dispatch_experts", dispatch_experts_node)
     workflow.add_node("research", research_node)
@@ -38,10 +38,10 @@ def build_debate_graph() -> StateGraph:
     workflow.add_node("synthesize_report", synthesize_report_node)
     workflow.add_node("analysis", analysis_node)
 
-    # Entry point
+    # 入口点
     workflow.set_entry_point("intent_parsing")
 
-    # Linear edges (conditional routing stubs for future)
+    # 线性边（未来的条件路由存根）
     workflow.add_conditional_edges(
         "intent_parsing",
         route_after_intent,

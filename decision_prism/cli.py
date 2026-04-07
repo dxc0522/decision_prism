@@ -1,4 +1,4 @@
-"""CLI entry point using Typer."""
+"""CLI 入口点（基于 Typer）。"""
 
 import json
 
@@ -35,7 +35,7 @@ def debate(
             console.print(f"[red]Debate failed: {e}[/red]")
             raise typer.Exit(1)
 
-    # Display results
+    # 显示结果
     errors = result.get("errors", [])
     if errors:
         console.print(
@@ -56,7 +56,7 @@ def debate(
             table.add_row(expert["name"], expert["domain"], expert["stance"])
         console.print(table)
 
-    # Round 1 summaries
+    # 第一轮观点摘要
     r1 = result.get("round_1_statements", [])
     if r1:
         for statement in r1:
@@ -68,7 +68,7 @@ def debate(
                 )
             )
 
-    # Report
+    # 报告
     report = result.get("report", {})
     if report:
         console.print(

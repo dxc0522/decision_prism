@@ -1,88 +1,88 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件为 Claude Code (claude.ai/code) 在此代码库中工作时提供指导。
 
-## Project Overview
+## 项目概述
 
-**Decision Prism Pro** — a Python backend for a "digital sandbox" strategic decision system. It dynamically dispatches domain-expert AI agents, runs a structured 3-round debate (statement → cross-examination → risk revision), and produces decision reports with probability intervals, causal chains, and Nash equilibrium analysis.
+**Decision Prism Pro** — 一个"数字沙盘"战略决策系统的 Python 后端。它动态调度领域专家 AI Agent，执行结构化的 3 轮辩论（陈述 → 交叉审查 → 风险修订），并生成包含概率区间、因果链和纳什均衡分析的决策报告。
 
-## Tech Stack
+## 技术栈
 
-| Component | Technology |
+| 组件 | 技术 |
 |-----------|-----------|
-| Language | Python (managed by `uv`) |
-| Agent Orchestration | LangGraph (StateGraph) |
-| LLM Gateway | OpenRouter → `langchain-openai` (OpenAI-compatible) |
-| Default Model | `qwen/qwen3.6-plus:free` |
-| Data Retrieval | Tavily AI + Firecrawl |
+| 语言 | Python（由 `uv` 管理） |
+| Agent 编排 | LangGraph (StateGraph) |
+| LLM 网关 | OpenRouter → `langchain-openai`（OpenAI 兼容） |
+| 默认模型 | `qwen/qwen3.6-plus:free` |
+| 数据检索 | Tavily AI + Firecrawl |
 | CLI | Typer + Rich |
-| Analysis | numpy + scipy (Monte Carlo) |
-| Tests | pytest + pytest-asyncio + pytest-cov |
-| Linting | ruff |
-| Type Check | mypy |
+| 分析 | numpy + scipy（蒙特卡洛） |
+| 测试 | pytest + pytest-asyncio + pytest-cov |
+| 代码检查 | ruff |
+| 类型检查 | mypy |
 
-## Architecture
+## 架构
 
 ```
-User Query ─▶ Intent Parsing ─▶ SME Dispatch ─▶ Research ─▶ R1 Debate ─▶ R2 Debate ─▶ R3 Debate ─▶ Synthesize ─▶ Analysis ─▶ Report
+用户查询 ─▶ 意图解析 ─▶ SME 调度 ─▶ 研究 ─▶ R1 辩论 ─▶ R2 辩论 ─▶ R3 辩论 ─▶ 综合 ─▶ 分析 ─▶ 报告
 ```
 
-### Package Structure
+### 包结构
 
 ```
 decision_prism/
-├── agents/        # SMEExpertAgent, RiskAgent, SynthesizerAgent + Registry (keyword dispatch)
-├── analysis/      # bayesian.py (Monte Carlo), causal.py, equilibrium.py (Nash)
+├── agents/        # SMEExpertAgent, RiskAgent, SynthesizerAgent + Registry（关键词分发）
+├── analysis/      # bayesian.py（蒙特卡洛）, causal.py, equilibrium.py（纳什均衡）
 ├── graph/         # LangGraph StateGraph — nodes.py, edges.py, workflow.py
-├── llm/           # Abstract LLMProvider + OpenRouter implementation + ModelConfig
-├── models/        # Pydantic models: DebateState, FinalReport, DebateEntry, etc.
-├── prompts/       # Jinja2 prompt loader + templates
+├── llm/           # 抽象 LLMProvider + OpenRouter 实现 + ModelConfig
+├── models/        # Pydantic 模型：DebateState, FinalReport, DebateEntry 等
+├── prompts/       # Jinja2 提示词加载器 + 模板
 └── tools/         # tavily_search.py, firecrawl.py, sentiment.py
-prompts/           # Markdown prompt templates (debate rounds, report)
-tests/             # Unit tests + integration tests
+prompts/           # Markdown 提示词模板（辩论轮次、报告）
+tests/             # 单元测试 + 集成测试
 ```
 
-### LangGraph Workflow
+### LangGraph 工作流
 
-The `StateGraph` is assembled in `decision_prism/graph/workflow.py`. It uses a `DebateState` TypedDict (defined in `decision_prism/models/state.py`) with LangGraph reducers for accumulating errors, research materials, and debate rounds. The flow is linear for MVP: 8 nodes connected sequentially, with edge stubs for future conditional routing.
+`StateGraph` 在 `decision_prism/graph/workflow.py` 中组装。它使用 `DebateState` TypedDict（定义在 `decision_prism/models/state.py` 中），带有 LangGraph reducer 用于累积错误、研究材料和辩论轮次。MVP 阶段为线性流程：8 个节点按顺序连接，带有用于未来条件路由的边存根。
 
-## Key Commands
+## 关键命令
 
 ```bash
-uv run decision-prism debate "Your query here"   # Run a full debate
-uv run decision-prism info                        # Show config/model info
-make test                                         # Run tests with coverage
-make lint                                         # Ruff check
-make format                                       # Ruff format
-make check                                        # lint + format + mypy
+uv run decision-prism debate "你的查询"    # 执行完整辩论
+uv run decision-prism info                 # 显示配置/模型信息
+make test                                  # 运行测试并生成覆盖率报告
+make lint                                  # Ruff 代码检查
+make format                                # Ruff 格式化
+make check                                 # lint + format + mypy 类型检查
 ```
 
-### Run a single test
+### 运行单个测试
 ```bash
 uv run pytest tests/test_graph/test_nodes.py -v
 ```
 
-### Run integration test
+### 运行集成测试
 ```bash
 uv run pytest tests/integration/test_debate_flow.py -v
 ```
 
-## Dependencies
+## 依赖
 
-All in `pyproject.toml`. Key deps: `langgraph`, `langchain`, `langchain-openai`, `pydantic`, `pydantic-settings`, `typer`, `rich`, `tavily-python`, `firecrawl-py`, `numpy`, `scipy`, `jinja2`, `httpx`, `tenacity`. Dev deps: `pytest`, `pytest-asyncio`, `pytest-cov`, `ruff`, `mypy`, `respx`.
+全部定义在 `pyproject.toml` 中。关键依赖：`langgraph`、`langchain`、`langchain-openai`、`pydantic`、`pydantic-settings`、`typer`、`rich`、`tavily-python`、`firecrawl-py`、`numpy`、`scipy`、`jinja2`、`httpx`、`tenacity`。开发依赖：`pytest`、`pytest-asyncio`、`pytest-cov`、`ruff`、`mypy`、`respx`。
 
-## Configuration
+## 配置
 
-Env vars in `.env` (create from `.env.example`):
-- `OPENROUTER_API_KEY` — required
-- `TAVILY_API_KEY` — required for research
-- `FIRECRAWL_API_KEY` — required for deep extraction
+环境变量在 `.env` 中创建（从 `.env.example` 复制）：
+- `OPENROUTER_API_KEY` — 必需
+- `TAVILY_API_KEY` — 研究功能必需
+- `FIRECRAWL_API_KEY` — 深度提取功能必需
 
-Model config in `decision_prism/llm/model_config.py` supports swapping to any OpenAI-compatible endpoint via `base_url`.
+`decision_prism/llm/model_config.py` 中的模型配置支持通过 `base_url` 切换到任何 OpenAI 兼容的端点。
 
-## Testing Strategy
+## 测试策略
 
-- **Unit tests**: Mock LLM provider, test each agent/graph node with known inputs
-- **Integration tests**: Full E2E with mocked LLM — verify state flows through all 3 rounds, report has all required keys
-- **Analysis tests**: Seeded Monte Carlo simulations for deterministic results (p5 < p50 < p95)
-- Target: 80%+ coverage
+- **单元测试**：模拟 LLM Provider，使用已知输入测试每个 Agent/图节点
+- **集成测试**：全流程 E2E 测试（模拟 LLM）— 验证状态流经全部 3 轮辩论，报告包含所有必需的键
+- **分析测试**：使用种子的蒙特卡洛模拟以获得确定性结果（p5 < p50 < p95）
+- **目标覆盖率**：80%+

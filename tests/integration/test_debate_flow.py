@@ -70,19 +70,19 @@ class TestFullDebateFlow:
 
         state = get_initial_state("What is the impact of interest rates on urban housing?")
 
-        # Intent parsing
+        # 意图解析
         state = {**state, **intent_parsing_node(state)}
         assert len(state["detected_domains"]) > 0
         assert len(state["selected_experts"]) > 0
 
-        # Dispatch (no-op)
+        # 分发（无操作）
         state = {**state, **dispatch_experts_node(state)}
 
-        # Research (graceful when no API key)
+        # 研究（没有 API 密钥时优雅处理）
         state = {**state, **research_node(state)}
         assert len(state["research_materials"]) > 0
 
-        # Verify state structure is complete for further rounds
+        # 验证状态结构对后续轮次完整
         assert "round_1_statements" in state
         assert state["current_round"] == 0
 
@@ -110,7 +110,7 @@ class TestFullDebateFlow:
         }
 
         r1 = debate_round1_node(base_state)
-        # Round 1 will populate errors due to no API key, that's fine
+        # 第一轮将因没有 API 密钥而填充错误，这没问题
         assert "round_1_statements" in r1
         assert "errors" in r1
 

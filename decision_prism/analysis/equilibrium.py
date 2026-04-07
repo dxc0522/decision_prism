@@ -1,6 +1,6 @@
-"""Nash equilibrium — stakeholder impact analysis.
+"""纳什均衡 — 利益相关者影响分析。
 
-MVP: structured extraction of winners/losers and Pareto improvement suggestions.
+MVP：结构化提取赢家/输家以及帕累托改进建议。
 """
 
 from pydantic import BaseModel
@@ -18,9 +18,9 @@ class EquilibriumResult(BaseModel):
 
 
 def analyze_equilibrium(debate_summary: str) -> EquilibriumResult:
-    """Analyze stakeholder impacts and suggest Pareto improvements.
+    """分析利益相关者影响并提出帕累托改进建议。
 
-    MVP returns empty — the real analysis comes from the synthesizer.
-    TODO: wire through LLM with structured JSON output.
+    MVP 返回空 — 真实分析来自综合代理。
+    待办：通过 LLM 连接并使用结构化 JSON 输出。
     """
     return EquilibriumResult(impacts=[], compensation_strategies=[])

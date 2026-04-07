@@ -1,4 +1,4 @@
-"""All graph nodes for the debate workflow."""
+"""辩论工作流中的所有图节点。"""
 
 import asyncio
 
@@ -10,13 +10,13 @@ from decision_prism.models.state import DebateState  # noqa: E402
 
 
 def _run(coro: asyncio.Future) -> str:
-    """Run an async coroutine from sync context."""
+    """从同步上下文运行异步协程。"""
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(coro)
 
 
 def intent_parsing_node(state: DebateState) -> dict:
-    """Extract domains from query using keyword dispatch."""
+    """使用关键词分发从查询中提取领域。"""
     from decision_prism.models.domain import dispatch_agents
 
     query = state["query"]
@@ -30,12 +30,12 @@ def intent_parsing_node(state: DebateState) -> dict:
 
 
 def dispatch_experts_node(state: DebateState) -> dict:
-    """Confirm expert assignments (already done by intent parsing)."""
+    """确认专家分配（已由意图解析完成）。"""
     return {}
 
 
 def research_node(state: DebateState) -> dict:
-    """Run Tavily search for each expert domain."""
+    """为每个专家领域运行 Tavily 搜索。"""
     from decision_prism.config import get_settings
     from decision_prism.tools.tavily_search import tavily_search
 
@@ -43,7 +43,7 @@ def research_node(state: DebateState) -> dict:
     materials: dict[str, list[str]] = {}
     errors = []
 
-    # Only do one search for the full query + top domain to save API calls
+    # 仅对完整查询 + 顶级领域执行一次搜索以节省 API 调用
     top_domain = state["detected_domains"][0] if state["detected_domains"] else "general"
     search_query = f"{query} {top_domain}"
 
@@ -62,7 +62,7 @@ def research_node(state: DebateState) -> dict:
 
 
 def debate_round1_node(state: DebateState) -> dict:
-    """Round 1: Each expert provides initial statement."""
+    """第一轮：每位专家提供初始陈述。"""
     from decision_prism.agents.expert import SMEExpertAgent
     from decision_prism.config import get_settings
     from decision_prism.llm.openrouter import OpenRouterProvider
@@ -109,7 +109,7 @@ def debate_round1_node(state: DebateState) -> dict:
 
 
 def debate_round2_node(state: DebateState) -> dict:
-    """Round 2: Cross-examination between experts."""
+    """第二轮：专家之间的交叉审查。"""
     from decision_prism.agents.expert import SMEExpertAgent
     from decision_prism.config import get_settings
     from decision_prism.llm.openrouter import OpenRouterProvider
@@ -170,7 +170,7 @@ def debate_round2_node(state: DebateState) -> dict:
 
 
 def debate_round3_node(state: DebateState) -> dict:
-    """Round 3: Risk assessment and expert revision."""
+    """第三轮：风险评估和专家修订。"""
     from decision_prism.agents.expert import SMEExpertAgent
     from decision_prism.agents.risk import RiskAgent
     from decision_prism.config import get_settings
@@ -180,7 +180,7 @@ def debate_round3_node(state: DebateState) -> dict:
         api_key=get_settings().openrouter_api_key,
         model=get_settings().llm_model,
         base_url=get_settings().llm_base_url,
-        temperature=0.8,  # Higher for risk agent
+        temperature=0.8,  # 风险代理使用较高温度
         max_tokens=get_settings().llm_max_tokens,
     )
 
@@ -226,7 +226,7 @@ def debate_round3_node(state: DebateState) -> dict:
                         api_key=get_settings().openrouter_api_key,
                         model=get_settings().llm_model,
                         base_url=get_settings().llm_base_url,
-                        temperature=0.5,  # More conservative for revision
+                        temperature=0.5,  # 修订时更保守
                         max_tokens=get_settings().llm_max_tokens,
                     ),
                 )
@@ -251,7 +251,7 @@ def debate_round3_node(state: DebateState) -> dict:
 
 
 def synthesize_report_node(state: DebateState) -> dict:
-    """Synthesize all debate rounds into a structured report."""
+    """将所有辩论轮次综合为结构化报告。"""
     import json
 
     from decision_prism.agents.synthesizer import SynthesizerAgent
@@ -262,7 +262,7 @@ def synthesize_report_node(state: DebateState) -> dict:
         api_key=get_settings().openrouter_api_key,
         model=get_settings().llm_model,
         base_url=get_settings().llm_base_url,
-        temperature=0.3,  # Low for structured output
+        temperature=0.3,  # 结构化输出使用较低温度
         max_tokens=get_settings().llm_max_tokens,
     )
 
@@ -311,7 +311,7 @@ def synthesize_report_node(state: DebateState) -> dict:
 
 
 def analysis_node(state: DebateState) -> dict:
-    """Run Bayesian calibration and sentiment analysis."""
+    """运行贝叶斯校准和情感分析。"""
     from decision_prism.analysis.bayesian import monte_carlo_simulation
     from decision_prism.tools.sentiment import analyze_sentiment
 

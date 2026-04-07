@@ -1,6 +1,6 @@
-"""Causal chain extraction.
+"""因果链提取。
 
-MVP: prompt-based extraction validated against a Pydantic model.
+MVP：基于提示词的提取，并通过 Pydantic 模型验证。
 """
 
 from pydantic import BaseModel
@@ -19,14 +19,13 @@ class CausalGraph(BaseModel):
 def extract_causal_chains(
     debate_summary: str,
 ) -> list[CausalLink]:
-    """Extract causal chains from debate text.
+    """从辩论文本中提取因果链。
 
-    MVP returns an empty list — the real extraction will be done
-    via the synthesizer LLM and structured output. This function
-    validates and wraps the output into Pydantic models.
+    MVP 返回空列表 — 实际提取将通过综合代理 LLM 和结构化输出完成。
+    此函数验证并将输出包装为 Pydantic 模型。
 
-    TODO: wire this through the LLM with a JSON schema response.
+    待办：通过 LLM 连接并使用 JSON 模式响应。
     """
-    # For MVP: the synthesizer already produces the causal chains
-    # as part of the structured report. This is a validation pass.
+    # 对于 MVP：综合代理已产生因果链
+    # 作为结构化报告的一部分。这是一个验证通道。
     return []

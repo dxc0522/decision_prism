@@ -35,7 +35,7 @@ class OpenRouterProvider(LLMProvider):
         max_tokens: int | None = None,
     ) -> dict:
         """Chat with the model. Returns {"content": str}."""
-        lc_messages = messages  # Already in OpenAI format
+        lc_messages = messages  # 已是 OpenAI 格式
         response = await self._llm.ainvoke(lc_messages)
         return {"content": response.content}
 

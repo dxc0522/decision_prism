@@ -59,20 +59,20 @@ def test_full_debate_flow(mock_provider_class):
 
     result = run_debate("What is the impact of rising interest rates on housing?")
 
-    # Verify all rounds produced content
+    # 验证所有轮次都产生了内容
     assert len(result.get("errors", [])) == 0, f"Errors: {result.get('errors')}"
     assert len(result["round_1_statements"]) > 0, "Round 1 missing statements"
     assert len(result["round_2_challenges"]) > 0, "Round 2 missing challenges"
     assert len(result["round_3_revisions"]) > 0, "Round 3 missing revisions"
 
-    # Verify report was generated
+    # 验证报告已生成
     assert result["report"], "Report is empty"
     report = result["report"]
     assert "probability_conclusions" in report, "Report missing probability_conclusions"
     assert "causal_chains" in report, "Report missing causal_chains"
     assert "stakeholder_impact" in report, "Report missing stakeholder_impact"
 
-    # Verify analysis results
+    # 验证分析结果
     assert "final_analysis" in result, "Missing final_analysis"
     assert "bayesian" in result["final_analysis"], "Missing bayesian calibration"
 
@@ -99,6 +99,6 @@ def test_research_materials_populated(mock_provider_class):
 
     result = run_debate("economic impact of remote work")
 
-    # Research materials should have at least one domain's data
-    # (even if just a placeholder when no API key)
+    # 研究材料应至少有一个领域的数据
+    # (即使在没有 API 密钥时也只是一个占位符)
     assert isinstance(result["research_materials"], dict)

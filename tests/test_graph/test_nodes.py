@@ -35,7 +35,7 @@ class TestNodes:
 
     def test_analysis_node_with_report_data(self, minimal_state):
         """Analysis node should compute Bayesian calibration from report data."""
-        state = dict(minimal_state)  # Copy
+        state = dict(minimal_state)  # 复制
         state["report"] = {
             "probability_conclusions": [
                 {"claim": "Housing prices will drop", "probability": 60, "confidence": 15},

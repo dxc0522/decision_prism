@@ -35,5 +35,5 @@ class TestMonteCarlo:
         result = monte_carlo_simulation(distributions, seed=42)
         assert "A" in result
         assert "B" in result
-        # B should have higher mean than A
+        # B 的均值应高于 A
         assert result["B"]["mean"] > result["A"]["mean"]
