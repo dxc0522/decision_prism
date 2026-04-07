@@ -21,7 +21,7 @@ class OpenRouterProvider(LLMProvider):
             base_url=base_url,
             temperature=temperature,
             max_tokens=max_tokens,
-            extra_headers={
+            default_headers={
                 "HTTP-Referer": "https://github.com/dxc0522/decision_prism",
                 "X-Title": "Decision Prism",
             },
